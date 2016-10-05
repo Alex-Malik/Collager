@@ -20,7 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Collager
+namespace Collager.Models
 {
     public interface IImage
     {
@@ -33,12 +33,12 @@ namespace Collager
     {
         public ImageRectangle(IImage image)
         {
-            Image = image;
+            Source = image;
             Width = image.Width;
             Height = image.Height;
         }
 
-        public IImage Image { get; }
+        public IImage Source { get; }
 
         public double Width { get; set; }
 
@@ -48,7 +48,7 @@ namespace Collager
 
         public double Y { get; set; }
 
-        public override string ToString() => $"{X},{Y} {Width}x{Height} {Image.ToString()}";
+        public override string ToString() => $"RECT[{X},{Y} {Width}x{Height} {Source.ToString()}]";
     }
 
     public class ImageWrapper : IImage
@@ -66,6 +66,6 @@ namespace Collager
 
         public double Height { get; }
 
-        public override string ToString() => $"{Path} ({Width}x{Height})";
+        public override string ToString() => $"WRAP[{Path} ({Width}x{Height})]";
     }
 }

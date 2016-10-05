@@ -24,10 +24,13 @@ using System.Threading.Tasks;
 
 namespace Collager
 {
+    using Behavior;
+    using Models;
+
     class Program
     {
         private const int MinPicturesCount = 1;
-        private const int MaxPicturesCount = 4;
+        private const int MaxPicturesCount = 5;
         private static readonly string InputPath = Directory.GetCurrentDirectory();
         private static readonly string OutputPath = Directory.CreateDirectory(Path.Combine(InputPath, "Result Collages")).FullName;
 
@@ -38,13 +41,18 @@ namespace Collager
 
             do
             {
-                for (int picturesCount = MinPicturesCount; picturesCount <= MaxPicturesCount; picturesCount++)
-                {
-                    IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(picturesCount, InputPath);
-                    IEnumerable<ImageRectangle> outputPictures = Collager.Create(inputPictures);
+                IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(MaxPicturesCount, InputPath);
+                IEnumerable<ImageRectangle> outputPictures = Collager.Create(inputPictures);
 
-                    SaveResult(outputPictures);
-                }
+                SaveResult(outputPictures);
+
+                //for (int picturesCount = MinPicturesCount; picturesCount <= MaxPicturesCount; picturesCount++)
+                //{
+                //    IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(picturesCount, InputPath);
+                //    IEnumerable<ImageRectangle> outputPictures = Collager.Create2(inputPictures);
+
+                //    SaveResult(outputPictures);
+                //}
             }
             while (ShowEnterOrEscape());
         }
@@ -83,7 +91,7 @@ namespace Collager
             foreach (ImageRectangle rectangle in rectangles)
             {
                 // Load image from file and arrange by corresponding rectangle.
-                graphics.DrawImage(Image.FromFile(((ImageWrapper)rectangle.Image).Path), 
+                graphics.DrawImage(Image.FromFile(((ImageWrapper)rectangle.Source).Path), 
                     (int)Math.Round(rectangle.X), (int)Math.Round(rectangle.Y),
                     (int)Math.Round(rectangle.Width), (int)Math.Round(rectangle.Height));
             }
@@ -94,7 +102,7 @@ namespace Collager
             // Show short info in console.
             Console.WriteLine($"Collage was successfully saved. Names of mixed pictures:");
             foreach (ImageRectangle rectangle in rectangles)
-                Console.WriteLine(Path.GetFileName(((ImageWrapper)rectangle.Image).Path));
+                Console.WriteLine(Path.GetFileName(((ImageWrapper)rectangle.Source).Path));
         }
         
         private static bool ShowEnterOrEscape()

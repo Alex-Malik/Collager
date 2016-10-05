@@ -15,39 +15,19 @@
 // along with Collager.  If not, see<http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Collager
+namespace Collager.Behavior
 {
-    using Behavior;
     using Models;
 
-    public class Collager
+    public interface ICollageBuildeBehavior
     {
-        public static ICollageBuildeBehavior Builder { get; set; } = new BinaryTreeBuildBehavior();
+        IEnumerable<ImageRectangle> Build(IEnumerable<IImage> source);
 
-        public static IEnumerable<ImageRectangle> Create(IEnumerable<IImage> source)
-        {
-            return Builder.Build(source);
-        }
-
-        public static IEnumerable<ImageRectangle> Create(IEnumerable<IImage> source, double targetWidth, double targetHeight)
-        {
-            return Builder.Build(source, targetWidth, targetHeight);
-        }
-    }
-    
-    internal static class ListExtenstion
-    {
-        public static T GetFirst<T>(this List<T> list)
-        {
-            T item = list.First();
-            list.Remove(item);
-            return item;
-        }
+        IEnumerable<ImageRectangle> Build(IEnumerable<IImage> source, double targetWidth, double targetHeight);
     }
 }
