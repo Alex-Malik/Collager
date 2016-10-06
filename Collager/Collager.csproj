@@ -44,9 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behavior\BinaryTreeBuildBehavior.cs" />
-    <Compile Include="Behavior\ICollageBuildeBehavior.cs" />
-    <Compile Include="Behavior\TwoSidesAddingBuildBehavior.cs" />
+    <Compile Include="Behavior\Method2.cs" />
+    <Compile Include="Behavior\ICollageBuildBehavior.cs" />
+    <Compile Include="Behavior\Method3.cs" />
+    <Compile Include="Behavior\Method1.cs" />
     <Compile Include="Models\Picture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

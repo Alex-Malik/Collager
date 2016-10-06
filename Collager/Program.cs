@@ -30,7 +30,7 @@ namespace Collager
     class Program
     {
         private const int MinPicturesCount = 1;
-        private const int MaxPicturesCount = 5;
+        private const int MaxPicturesCount = 4;
         private static readonly string InputPath = Directory.GetCurrentDirectory();
         private static readonly string OutputPath = Directory.CreateDirectory(Path.Combine(InputPath, "Result Collages")).FullName;
 
@@ -39,12 +39,14 @@ namespace Collager
             Console.WriteLine($"Input directory:  {InputPath}");
             Console.WriteLine($"Output directory: {OutputPath}");
 
+            Collager.Builder = new Method3();
+
             do
             {
                 IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(MaxPicturesCount, InputPath);
-                IEnumerable<ImageRectangle> outputPictures = Collager.Create(inputPictures);
+                IEnumerable<ImageRectangle> outputPictures = Collager.Create(inputPictures, 1200, 630);
 
-                SaveResult(outputPictures);
+                SaveResult(outputPictures, 1200, 630);
 
                 //for (int picturesCount = MinPicturesCount; picturesCount <= MaxPicturesCount; picturesCount++)
                 //{
@@ -76,12 +78,12 @@ namespace Collager
             return pictures;
         }
 
-        private static void SaveResult(IEnumerable<ImageRectangle> rectangles)
+        private static void SaveResult(IEnumerable<ImageRectangle> rectangles, double backgroundWidth, double backgroundHeight)
         {
             if (!rectangles.Any()) return;
 
-            double backgroundWidth = rectangles.GroupBy(p => p.Y).Max(g => g.Sum(p => p.Width));
-            double backgroundHeight = rectangles.GroupBy(p => p.X).Max(g => g.Sum(p => p.Height));
+            //double backgroundWidth = rectangles.GroupBy(p => p.Y).Max(g => g.Sum(p => p.Width));
+            //double backgroundHeight = rectangles.GroupBy(p => p.X).Max(g => g.Sum(p => p.Height));
 
             Bitmap background = new Bitmap((int)Math.Round(backgroundWidth), (int)Math.Round(backgroundHeight));
             Graphics graphics = Graphics.FromImage(background);

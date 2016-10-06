@@ -24,7 +24,7 @@ namespace Collager.Behavior
 {
     using Models;
 
-    public interface ICollageBuildeBehavior
+    public interface ICollageBuildBehavior
     {
         IEnumerable<ImageRectangle> Build(IEnumerable<IImage> source);
 

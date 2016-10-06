@@ -24,7 +24,10 @@ namespace Collager.Behavior
 {
     using Models;
 
-    public class BinaryTreeBuildBehavior : ICollageBuildeBehavior
+    /// <summary>
+    /// This method builds a binary tree of image pairs and then glue them to each other.
+    /// </summary>
+    public class Method2 : ICollageBuildBehavior
     {
         public IEnumerable<ImageRectangle> Build(IEnumerable<IImage> source)
         {

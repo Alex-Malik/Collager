@@ -24,7 +24,11 @@ namespace Collager.Behavior
 {
     using Models;
 
-    public class TwoSidesAddingBuildBehavior : ICollageBuildeBehavior
+    /// <summary>
+    /// This method appends new photos to the right side or to the bottom side of
+    /// a result shape depending on shape orientation.
+    /// </summary>
+    public class Method1 : ICollageBuildBehavior
     {
         public IEnumerable<ImageRectangle> Build(IEnumerable<IImage> source)
         {

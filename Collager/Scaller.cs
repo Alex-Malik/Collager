@@ -28,7 +28,7 @@ namespace Collager
 
     public class Collager
     {
-        public static ICollageBuildeBehavior Builder { get; set; } = new BinaryTreeBuildBehavior();
+        public static ICollageBuildBehavior Builder { get; set; } = new Method2();
 
         public static IEnumerable<ImageRectangle> Create(IEnumerable<IImage> source)
         {
