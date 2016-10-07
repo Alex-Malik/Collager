@@ -48,6 +48,7 @@
     <Compile Include="Behavior\ICollageBuildBehavior.cs" />
     <Compile Include="Behavior\Method3.cs" />
     <Compile Include="Behavior\Method1.cs" />
+    <Compile Include="Behavior\Method4.cs" />
     <Compile Include="Models\Picture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -30,31 +30,40 @@ namespace Collager
     class Program
     {
         private const int MinPicturesCount = 1;
-        private const int MaxPicturesCount = 4;
-        private static readonly string InputPath = Directory.GetCurrentDirectory();
-        private static readonly string OutputPath = Directory.CreateDirectory(Path.Combine(InputPath, "Result Collages")).FullName;
+        private const int MaxPicturesCount = 3;
+        private static readonly string CurrentDirectory = Directory.GetCurrentDirectory();
+        private static readonly string InputPath = Path.Combine(CurrentDirectory, "Test Images");
+        private static readonly string OutputPath = Directory.CreateDirectory(Path.Combine(CurrentDirectory, "Result Collages")).FullName;
 
         static void Main(string[] args)
         {
             Console.WriteLine($"Input directory:  {InputPath}");
             Console.WriteLine($"Output directory: {OutputPath}");
 
-            Collager.Builder = new Method3();
+            Collager.Builder = new Method4();
 
             do
             {
+                //IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(MaxPicturesCount, InputPath);
+                //IEnumerable<ImageRectangle> outputPictures = Collager.Create(inputPictures);//, 1200, 630);
+
+                //SaveResult(outputPictures, 1200, 630);
+
+                ////for (int picturesCount = MinPicturesCount; picturesCount <= MaxPicturesCount; picturesCount++)
+                ////{
+                ////    IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(picturesCount, InputPath);
+                ////    IEnumerable<ImageRectangle> outputPictures = Collager.Create2(inputPictures);
+
+                ////    SaveResult(outputPictures);
+                ////}
+
+                Method4 builder = new Method4();
+
                 IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(MaxPicturesCount, InputPath);
-                IEnumerable<ImageRectangle> outputPictures = Collager.Create(inputPictures, 1200, 630);
-
-                SaveResult(outputPictures, 1200, 630);
-
-                //for (int picturesCount = MinPicturesCount; picturesCount <= MaxPicturesCount; picturesCount++)
-                //{
-                //    IEnumerable<ImageWrapper> inputPictures = GetRandomPictures(picturesCount, InputPath);
-                //    IEnumerable<ImageRectangle> outputPictures = Collager.Create2(inputPictures);
-
-                //    SaveResult(outputPictures);
-                //}
+                foreach (IEnumerable<ImageRectangle> outputPictures in builder.BuildTest(inputPictures))
+                {
+                    SaveResult(outputPictures);
+                }
             }
             while (ShowEnterOrEscape());
         }
@@ -76,6 +85,35 @@ namespace Collager
             }
 
             return pictures;
+        }
+
+        private static void SaveResult(IEnumerable<ImageRectangle> rectangles)
+        {
+            if (!rectangles.Any()) return;
+
+            double backgroundWidth = rectangles.GroupBy(p => p.Y).Max(g => g.Sum(p => p.Width));
+            double backgroundHeight = rectangles.GroupBy(p => p.X).Max(g => g.Sum(p => p.Height));
+
+            Bitmap background = new Bitmap((int)Math.Round(backgroundWidth), (int)Math.Round(backgroundHeight));
+            Graphics graphics = Graphics.FromImage(background);
+
+            graphics.FillRectangle(Brushes.White, 0, 0, background.Width, background.Height);
+
+            foreach (ImageRectangle rectangle in rectangles)
+            {
+                // Load image from file and arrange by corresponding rectangle.
+                graphics.DrawImage(Image.FromFile(((ImageWrapper)rectangle.Source).Path),
+                    (int)Math.Round(rectangle.X), (int)Math.Round(rectangle.Y),
+                    (int)Math.Round(rectangle.Width), (int)Math.Round(rectangle.Height));
+            }
+
+            // Save image to the drive.
+            background.Save(Path.Combine(OutputPath, $"{DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss")} ({rectangles.Count()}).png"));
+
+            // Show short info in console.
+            Console.WriteLine($"Collage was successfully saved. Names of mixed pictures:");
+            foreach (ImageRectangle rectangle in rectangles)
+                Console.WriteLine(Path.GetFileName(((ImageWrapper)rectangle.Source).Path));
         }
 
         private static void SaveResult(IEnumerable<ImageRectangle> rectangles, double backgroundWidth, double backgroundHeight)

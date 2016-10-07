@@ -64,7 +64,7 @@ namespace Collager.Behavior
                     // resize rect, otherwise resize shape.
                     if (imageRectangle.Width > shapeWidth)
                     {
-                        // Make rect smaller and put it on the right side.
+                        // Make rect smaller and put it on the bottom side.
                         imageRectangle.X = 0.0;
                         imageRectangle.Y = shapeHeight;
                         imageRectangle.Height = GetHeight(imageRectangle.Width, imageRectangle.Height, shapeWidth);
@@ -76,7 +76,7 @@ namespace Collager.Behavior
                     }
                     else
                     {
-                        // Make shape smaller and put the rect on the right side.
+                        // Make shape smaller and put the rect on the bottom side.
                         shapeHeight = GetHeight(shapeWidth, shapeHeight, imageRectangle.Width);
                         shapeWidth = imageRectangle.Width;
 

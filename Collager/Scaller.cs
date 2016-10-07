@@ -43,7 +43,10 @@ namespace Collager
     
     internal static class ListExtenstion
     {
-        public static T GetFirst<T>(this List<T> list)
+        /// <summary>
+        /// Returns a first element of the list and remove it from the list.
+        /// </summary>
+        public static T Pop<T>(this List<T> list)
         {
             T item = list.First();
             list.Remove(item);

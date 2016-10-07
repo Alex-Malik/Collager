@@ -59,12 +59,12 @@ namespace Collager.Behavior
 
             while (images.Count > 1)
             {
-                IImage img1 = images.GetFirst();
+                IImage img1 = images.Pop();
 
                 // List of condidates for current image
                 List<IImage> selection = images.ToList();
 
-                IImage img2 = selection.GetFirst();
+                IImage img2 = selection.Pop();
 
                 IImage bestByWidth = img2;
                 IImage bestByHeight = img2;
@@ -75,7 +75,7 @@ namespace Collager.Behavior
                 {
                     // Get differences for another one condidate and then 
                     // compare it the previous best condidate
-                    img2 = selection.GetFirst();
+                    img2 = selection.Pop();
 
                     double newDiffByWidth = Math.Abs(img1.Width - img2.Width);
                     double newDiffByHeight = Math.Abs(img1.Height - img2.Height);
@@ -117,7 +117,7 @@ namespace Collager.Behavior
             }
             else if (images.Any())
             {
-                IImage img = images.GetFirst();
+                IImage img = images.Pop();
                 Type imgType = img.GetType();
 
                 if (imgType == typeof(ImageRectangle) || imgType == typeof(ImageNode))
