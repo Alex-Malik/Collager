@@ -26,23 +26,65 @@ namespace Collager.Behavior
             // Get a list of possible trees (a list of roots of tree)
             IEnumerable<INode> roots = GetPossibleNodes(source.Count());
             
-            List<IEnumerable<ImageRectangle>> collages = new List<IEnumerable<ImageRectangle>>();
+            List<ImageShape> collages = new List<ImageShape>();
 
             // Build each tree for each combination of images
             foreach (INode root in roots)
             {
                 foreach (IEnumerable<IImage> combination in combinations)
                 {
-                    collages.Add(Arrange(root, combination.ToList()).Images);
+                    collages.Add(Arrange(root, combination.ToList()));
                 }
             }
 
-            throw new NotImplementedException();
+            return collages.OrderByDescending(c => c.Width * c.Height).First().Images;
         }
 
         public IEnumerable<ImageRectangle> Build(IEnumerable<IImage> source, double targetWidth, double targetHeight)
         {
-            throw new NotImplementedException();
+            // 1. Get a list of possible combinations. (ret L<L<I>>)*
+            // 2. Get trees of possible positions. (ret L<N>)
+            // 3. Build each tree for each combination of images. (ret L<L<IR>>)
+            // 4. Resize each shape to fit target area.
+            // 5. Choose best one by square.
+            // * L<> - List; I - IImage; N - INode; IR - ImageRectange.
+
+            // Get a list of possible combinations for source images
+            IEnumerable<IEnumerable<IImage>> combinations = GetPossibleCombinations(source);
+
+            // Get a list of possible trees (a list of roots of tree)
+            IEnumerable<INode> roots = GetPossibleNodes(source.Count());
+
+            List<ImageShape> collages = new List<ImageShape>();
+
+            // Build each tree for each combination of images
+            foreach (INode root in roots)
+            {
+                foreach (IEnumerable<IImage> combination in combinations)
+                {
+                    collages.Add(Arrange(root, combination.ToList()));
+                }
+            }
+
+            // Resize each shape to fit target area
+            foreach (ImageShape collage in collages)
+            {
+                if (collage.Height > targetHeight)
+                {
+                    ScaleShape(collage, GetWidth(collage.Width, collage.Height, targetHeight), targetHeight);
+                }
+
+                if (collage.Width > targetWidth)
+                {
+                    ScaleShape(collage, targetWidth, GetHeight(collage.Width, collage.Height, targetWidth));
+                }
+                
+                LocateShape(collage, (targetWidth - collage.Width) / 2, (targetHeight - collage.Height) / 2);
+            }
+
+            // Choose best one by square
+            double targetSquare = targetWidth * targetHeight;
+            return collages.OrderBy(c => targetSquare - (c.Width * c.Height)).First().Images;
         }
 
         public List<IEnumerable<ImageRectangle>> BuildTest(IEnumerable<IImage> source)
@@ -200,7 +242,12 @@ namespace Collager.Behavior
         private IEnumerable<INode> GetPossibleNodes(int n)
         {
             // If N is equal to one then it is a leaf node
-            if (n == 1) return new[] { new Node() };
+            if (n == 1) return new INode[] { new Node() };
+
+            if (n == 2) return new INode[] {
+                new VNode { TNode = new Node(), BNode = new Node() },
+                new HNode { LNode = new Node(), RNode = new Node() }
+            };
 
             // Otherwise get combinations for two possible 
             // situations: vertical and horizontal
@@ -208,41 +255,30 @@ namespace Collager.Behavior
 
             // Get combinations for vertical node; for each
             // combination of top node add combination of bottom node
-            foreach (INode tNode in GetPossibleNodes(n - 1))
+            foreach (INode node in GetPossibleNodes(n - 1))
             {
-                // If we are able to create a vnode then get
-                // possible combinations for it, otherwise create a leaf node 
-                if (n > 2)
-                {
-                    foreach (INode bNode in GetPossibleNodes(n - 2))
-                    {
-                        nodes.Add(new VNode { TNode = tNode, BNode = bNode });
-                    }
-                }
-                else
-                {
-                    nodes.Add(new VNode { TNode = tNode, BNode = new Node() });
-                }
+                //// If we are able to create a vnode then get
+                //// possible combinations for it, otherwise create a leaf node 
+                //foreach (INode bNode in GetPossibleNodes(n - 2))
+                //{
+                //    nodes.Add(new VNode { TNode = tNode, BNode = bNode });
+                //}
+
+                nodes.Add(new VNode { TNode = node, BNode = new Node() });
+                nodes.Add(new HNode { LNode = node, RNode = new Node() });
             }
 
-            // The same with horizontal node, for each left node
-            // add right each right node
-            foreach (INode lNode in GetPossibleNodes(n - 1))
-            {
-                // If we are able to create a hnode then get
-                // possible combinations for it, otherwise create a leaf node
-                if (n > 2)
-                {
-                    foreach (INode rNode in GetPossibleNodes(n - 2))
-                    {
-                        nodes.Add(new HNode { LNode = lNode, RNode = rNode });
-                    }
-                }
-                else
-                {
-                    nodes.Add(new HNode { LNode = lNode, RNode = new Node() });
-                }
-            }
+            //// The same with horizontal node, for each left node
+            //// add right each right node
+            //foreach (INode lNode in GetPossibleNodes(n - 1))
+            //{
+            //    // If we are able to create a hnode then get
+            //    // possible combinations for it, otherwise create a leaf node
+            //    foreach (INode rNode in GetPossibleNodes(n - 2))
+            //    {
+            //        nodes.Add(new HNode { LNode = lNode, RNode = rNode });
+            //    }
+            //}
 
             return nodes;
         }
